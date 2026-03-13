@@ -5,7 +5,8 @@ import { useTheme } from '../context/ThemeProvider';
 import {
   Home, Settings, Users, BarChart3, FileText, Bell, User,
   Mail, Shield, Trash2, Edit3, Copy, Download, Plus,
-  Sun, Moon, Contrast, Package, Search as SearchIcon
+  Sun, Moon, Contrast, Package, Search as SearchIcon,
+  DollarSign, UserCheck, TicketCheck, Activity, Filter
 } from 'lucide-react';
 
 import {Button} from '@/components';
@@ -28,6 +29,9 @@ import {Form, FormGroup, FormRow, FormActions } from '@/components';
 import {Search} from '@/components';
 import {DataTable} from '@/components';
 import {Pagination} from '@/components';
+import {KpiCard} from '@/components';
+import {ActivityFeed, NotificationList, RankedList, AvatarList, TableList} from '@/components';
+import ChartShowcase from './Charts/ChartShowcase';
 
 /* ---------- Section wrapper ---------- */
 function Section({ title, children }) {
@@ -600,6 +604,158 @@ export default function ShowcasePage() {
                 }
                 striped
               />
+            </Section>
+
+            {/* ===== CHARTS ===== */}
+            <Section title="Charts">
+              <p className="text-[length:var(--ds-text-sm)] text-[var(--ds-text-secondary)] mb-6">
+                28 chart variants across 6 chart types — Bar, Line, Area, Pie/Donut, Composed, and Radial/Gauge. All charts support light, dark, and high-contrast themes.
+              </p>
+              <ChartShowcase />
+            </Section>
+
+            {/* ===== KPI CARD ===== */}
+            <Section title="KPI Card">
+              <SubSection title="Simple">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <KpiCard label="Total Revenue" value="$48,290" />
+                  <KpiCard label="Active Users" value="2,847" />
+                  <KpiCard label="Open Tickets" value="142" />
+                  <KpiCard label="Avg Response" value="1.4h" />
+                </div>
+              </SubSection>
+              <SubSection title="With Trend">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <KpiCard label="Revenue" value="$48,290" variant="with-trend" trendData={[20, 25, 22, 30, 28, 35, 40, 38, 45, 48]} />
+                  <KpiCard label="Sessions" value="12,483" variant="with-trend" trendData={[100, 120, 90, 110, 130, 125, 140, 150, 145, 160]} trendColor="var(--ds-text-success)" />
+                  <KpiCard label="Bounce Rate" value="34.2%" variant="with-trend" trendData={[45, 42, 38, 40, 36, 34, 37, 35, 33, 34]} trendColor="var(--ds-text-danger)" />
+                </div>
+              </SubSection>
+              <SubSection title="With Delta">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <KpiCard label="Revenue" value="$48,290" variant="with-delta" delta={12.5} deltaLabel="vs last month" />
+                  <KpiCard label="Users" value="2,847" variant="with-delta" delta={-3.2} deltaLabel="vs last week" />
+                  <KpiCard label="Orders" value="1,024" variant="with-delta" delta={0} deltaLabel="no change" />
+                  <KpiCard label="Items Sold" value="8,491" variant="with-delta" delta={340} deltaFormat="absolute" deltaLabel="vs yesterday" />
+                </div>
+              </SubSection>
+              <SubSection title="With Progress">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <KpiCard label="Q1 Target" value="$48,290" variant="with-progress" progress={72} target="$67,000" progressType="bar" />
+                  <KpiCard label="Sprint Velocity" value="84 pts" variant="with-progress" progress={84} target="100 pts" progressType="bar" progressColor="var(--ds-text-success)" />
+                  <KpiCard label="Disk Usage" value="142 GB" variant="with-progress" progress={62} progressType="ring" />
+                  <KpiCard label="Quota" value="8,491" variant="with-progress" progress={93} progressType="ring" progressColor="var(--ds-text-danger)" />
+                </div>
+              </SubSection>
+              <SubSection title="With Icon">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <KpiCard label="Revenue" value="$48,290" variant="with-icon" icon={<DollarSign size={20} />} iconColor="var(--ds-green-500)" />
+                  <KpiCard label="Active Users" value="2,847" variant="with-icon" icon={<UserCheck size={20} />} iconColor="var(--ds-blue-500)" />
+                  <KpiCard label="Open Tickets" value="142" variant="with-icon" icon={<TicketCheck size={20} />} iconColor="var(--ds-amber-500)" />
+                  <KpiCard label="Uptime" value="99.98%" variant="with-icon" icon={<Activity size={20} />} iconColor="var(--ds-teal-500)" />
+                </div>
+              </SubSection>
+            </Section>
+
+            {/* ===== LIST / FEED ===== */}
+            <Section title="List / Feed">
+              <SubSection title="Activity Feed">
+                <div className="max-w-xl border rounded-[var(--ds-radius-lg)] overflow-hidden" style={{ borderColor: 'var(--ds-border-primary)', backgroundColor: 'var(--ds-bg-primary)' }}>
+                  <ActivityFeed
+                    items={[
+                      { content: 'John closed deal "Acme Enterprise" for $24,000', timestamp: 'Today at 2:14 PM', color: 'var(--ds-green-500)' },
+                      { content: 'Sarah added 3 new contacts to "Globex Corp"', timestamp: 'Today at 1:45 PM', color: 'var(--ds-blue-500)' },
+                      { content: 'Mike updated the Q1 forecast to $1.2M', timestamp: 'Today at 11:30 AM', color: 'var(--ds-amber-500)' },
+                      { content: 'Lisa assigned ticket #482 to the engineering team', timestamp: 'Yesterday at 4:52 PM', color: 'var(--ds-teal-500)' },
+                      { content: 'System backup completed successfully', timestamp: 'Yesterday at 2:00 AM', color: 'var(--ds-gray-400)' },
+                    ]}
+                  />
+                </div>
+              </SubSection>
+
+              <SubSection title="Notification List">
+                <div className="max-w-xl border rounded-[var(--ds-radius-lg)] overflow-hidden" style={{ borderColor: 'var(--ds-border-primary)', backgroundColor: 'var(--ds-bg-primary)' }}>
+                  <NotificationList
+                    items={[
+                      { title: 'Deployment succeeded', description: 'v2.4.1 deployed to production', severity: 'success', timestamp: '5 min ago' },
+                      { title: 'High CPU usage detected', description: 'Server us-east-1 at 92% for 10 minutes', severity: 'warning', timestamp: '12 min ago', unread: true },
+                      { title: 'Payment failed', description: 'Invoice #1042 charge declined', severity: 'error', timestamp: '1 hour ago', unread: true },
+                      { title: 'New team member added', description: 'alex@company.com joined the Design team', severity: 'info', timestamp: '3 hours ago' },
+                    ]}
+                  />
+                </div>
+              </SubSection>
+
+              <SubSection title="Ranked List">
+                <div className="max-w-md border rounded-[var(--ds-radius-lg)] overflow-hidden" style={{ borderColor: 'var(--ds-border-primary)', backgroundColor: 'var(--ds-bg-primary)' }}>
+                  <RankedList
+                    items={[
+                      { label: 'Acme Corporation', sublabel: 'Enterprise', value: '$142K' },
+                      { label: 'Globex Inc.', sublabel: 'Mid-market', value: '$98K' },
+                      { label: 'Initech LLC', sublabel: 'Enterprise', value: '$87K' },
+                      { label: 'Hooli Systems', sublabel: 'Startup', value: '$64K' },
+                      { label: 'Pied Piper', sublabel: 'Startup', value: '$51K' },
+                    ]}
+                  />
+                </div>
+              </SubSection>
+
+              <SubSection title="With Avatar">
+                <div className="max-w-md border rounded-[var(--ds-radius-lg)] overflow-hidden" style={{ borderColor: 'var(--ds-border-primary)', backgroundColor: 'var(--ds-bg-primary)' }}>
+                  <AvatarList
+                    items={[
+                      { name: 'Alice Johnson', description: 'Closed 12 deals this month', meta: '2m ago' },
+                      { name: 'Bob Smith', description: 'Updated pipeline forecast', meta: '15m ago' },
+                      { name: 'Carol Williams', description: 'Added 5 new leads', meta: '1h ago' },
+                      { name: 'Dave Brown', description: 'Completed onboarding', meta: '3h ago' },
+                    ]}
+                  />
+                </div>
+              </SubSection>
+
+              <SubSection title="With Table">
+                <div className="border rounded-[var(--ds-radius-lg)] overflow-hidden p-4" style={{ borderColor: 'var(--ds-border-primary)', backgroundColor: 'var(--ds-bg-primary)' }}>
+                  <TableList
+                    sortable
+                    columns={[
+                      { key: 'name', header: 'Account', icon: <Users size={12} /> },
+                      { key: 'deal', header: 'Deal' },
+                      { key: 'value', header: 'Value', width: '100px' },
+                      {
+                        key: 'status',
+                        header: 'Status',
+                        width: '120px',
+                        render: (val) => {
+                          const c = val === 'Won' ? 'success' : val === 'Lost' ? 'danger' : 'warning';
+                          return <Tag size="sm" color={c}>{val}</Tag>;
+                        },
+                      },
+                    ]}
+                    data={[
+                      { id: 1, name: 'Acme Corp', deal: 'Enterprise License', value: '$24,000', status: 'Won' },
+                      { id: 2, name: 'Globex Inc', deal: 'Pro Plan Upgrade', value: '$12,500', status: 'Negotiating' },
+                      { id: 3, name: 'Initech', deal: 'API Access', value: '$8,200', status: 'Won' },
+                      { id: 4, name: 'Hooli', deal: 'Starter Plan', value: '$3,400', status: 'Lost' },
+                      { id: 5, name: 'Pied Piper', deal: 'Custom Integration', value: '$18,000', status: 'Negotiating' },
+                    ]}
+                    actions={
+                      <>
+                        <Button size="sm" variant="secondary" icon={<Filter size={14} />}>Filter</Button>
+                        <Dropdown
+                          options={[
+                            { value: 'all', label: 'All Statuses' },
+                            { value: 'won', label: 'Won' },
+                            { value: 'lost', label: 'Lost' },
+                            { value: 'negotiating', label: 'Negotiating' },
+                          ]}
+                          placeholder="Status"
+                          size="sm"
+                        />
+                      </>
+                    }
+                  />
+                </div>
+              </SubSection>
             </Section>
 
             {/* ===== BREADCRUMB ===== */}

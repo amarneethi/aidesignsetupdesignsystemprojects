@@ -41,6 +41,20 @@ All components are exported from the barrel file and can be imported individuall
 | Skeleton | `import { Skeleton } from '@/components'` | `import { Skeleton } from '@/components/Loading/Loading'` |
 | SkeletonText | `import { SkeletonText } from '@/components'` | `import { SkeletonText } from '@/components/Loading/Loading'` |
 | TableSkeleton | `import { TableSkeleton } from '@/components'` | `import { TableSkeleton } from '@/components/Loading/Loading'` |
+| BarChart | `import { BarChart } from '@/components'` | `import { BarChart } from '@/components/Charts/BarChart'` |
+| LineChart | `import { LineChart } from '@/components'` | `import { LineChart } from '@/components/Charts/LineChart'` |
+| AreaChart | `import { AreaChart } from '@/components'` | `import { AreaChart } from '@/components/Charts/AreaChart'` |
+| PieChart | `import { PieChart } from '@/components'` | `import { PieChart } from '@/components/Charts/PieChart'` |
+| ComposedChart | `import { ComposedChart } from '@/components'` | `import { ComposedChart } from '@/components/Charts/ComposedChart'` |
+| RadialChart | `import { RadialChart } from '@/components'` | `import { RadialChart } from '@/components/Charts/RadialChart'` |
+| ChartWrapper | `import { ChartWrapper } from '@/components'` | `import { ChartWrapper } from '@/components/Charts/chartTheme'` |
+| List | `import { List } from '@/components'` | `import List from '@/components/List/List'` |
+| ActivityFeed | `import { ActivityFeed } from '@/components'` | `import { ActivityFeed } from '@/components/List/List'` |
+| NotificationList | `import { NotificationList } from '@/components'` | `import { NotificationList } from '@/components/List/List'` |
+| RankedList | `import { RankedList } from '@/components'` | `import { RankedList } from '@/components/List/List'` |
+| AvatarList | `import { AvatarList } from '@/components'` | `import { AvatarList } from '@/components/List/List'` |
+| TableList | `import { TableList } from '@/components'` | `import { TableList } from '@/components/List/List'` |
+| KpiCard | `import { KpiCard } from '@/components'` | `import KpiCard from '@/components/KpiCard/KpiCard'` |
 
 ---
 
@@ -404,6 +418,313 @@ Renders fixed at bottom-right.
 <Skeleton width="200px" height="1rem" variant="rectangular" />  // "rectangular" | "circular" | "text"
 <SkeletonText lines={3} />
 <TableSkeleton rows={5} columns={4} />
+```
+
+### Charts (Recharts-based)
+
+All chart components share common props: `data`, `height`, `title`, `subtitle`, `showTooltip`, `showLegend`, `colors`, and `className`. They are wrapped in `ChartWrapper` (a card-like container) and automatically adapt to dark/high-contrast themes via a `MutationObserver` on `data-theme`. Charts use `SERIES_COLORS` (a 10-color ordered palette) by default. Override with the `colors` prop.
+
+**Dependency:** All chart components require `recharts` as a peer dependency.
+
+#### ChartWrapper
+```jsx
+<ChartWrapper
+  title="Revenue"              // optional heading
+  subtitle="Monthly trend"    // optional subheading
+  className=""
+>
+  {/* chart content */}
+</ChartWrapper>
+```
+
+#### BarChart
+```jsx
+<BarChart
+  variant="vertical"           // "vertical" | "horizontal" | "grouped" | "stacked" | "stacked-percent" | "diverging" | "waterfall"
+  data={[{ name: 'Jan', revenue: 4200, expenses: 2400 }]}
+  dataKeys={['revenue']}       // keys from data to render as bars
+  xAxisKey="name"              // key for the category axis
+  colors={[]}                  // optional color array, defaults to SERIES_COLORS
+  height={300}
+  title=""
+  subtitle=""
+  showGrid={true}
+  showLegend={true}            // auto-hidden for single series
+  showTooltip={true}
+  barRadius={4}                // border-radius on bar corners
+/>
+```
+**Variant notes:**
+- `grouped`: side-by-side bars for multi-series comparison
+- `stacked-percent`: normalizes each row to 100%, Y-axis shows percentages
+- `diverging`: colors bars green (positive) or red (negative) around a zero baseline
+- `waterfall`: shows cumulative build-up with invisible base bars; first & last bars are totals
+
+#### LineChart
+```jsx
+<LineChart
+  variant="single"             // "single" | "multi" | "stepped" | "dashed-target" | "with-threshold"
+  data={[{ name: 'Week 1', users: 1200, target: 1500 }]}
+  dataKeys={['users']}
+  xAxisKey="name"
+  colors={[]}
+  height={300}
+  title=""
+  subtitle=""
+  showGrid={true}
+  showLegend                   // defaults to true when multi-series
+  showTooltip={true}
+  showDots={true}
+  strokeWidth={2}
+  thresholdValue={1500}        // only for "with-threshold" — draws horizontal reference line
+  thresholdLabel="Threshold"   // label on the reference line
+  targetKey="target"           // only for "dashed-target" — which dataKey renders dashed
+/>
+```
+
+#### AreaChart
+```jsx
+<AreaChart
+  variant="single"             // "single" | "stacked" | "stacked-percent" | "gradient" | "range"
+  data={[{ name: 'Mon', tickets: 42 }]}
+  dataKeys={['tickets']}
+  xAxisKey="name"
+  colors={[]}
+  height={300}
+  title=""
+  subtitle=""
+  showGrid={true}
+  showLegend                   // defaults to true when multi-series
+  showTooltip={true}
+  strokeWidth={2}
+  rangeKeys={{ upper: 'upper', lower: 'lower' }}  // only for "range" variant
+/>
+```
+**Variant notes:**
+- `gradient`: prominent gradient fill from top to bottom
+- `range`: renders a confidence-interval band between `rangeKeys.upper` and `rangeKeys.lower`, with a line for the first `dataKey`
+
+#### PieChart
+```jsx
+<PieChart
+  variant="standard"           // "standard" | "donut" | "semi" | "nested"
+  data={[{ name: 'Enterprise', value: 45 }]}
+  outerData={[]}               // only for "nested" — second ring data
+  colors={[]}
+  height={300}
+  title=""
+  subtitle=""
+  showLegend={true}
+  showTooltip={true}
+  showLabels={false}           // percentage labels inside slices
+  centerValue="$1.2M"         // center text for "donut" and "semi"
+  centerLabel="ARR"           // center subtext
+/>
+```
+**Variant notes:**
+- `donut`: pie with inner radius cutout; supports center text
+- `semi`: half-circle donut (180° arc); supports center text
+- `nested`: two concentric rings — inner from `data`, outer from `outerData`
+
+#### ComposedChart
+```jsx
+<ComposedChart
+  variant="bar-line"           // "bar-line" | "bar-area" | "multi-axis"
+  data={[{ name: 'Jan', revenue: 42000, margin: 32 }]}
+  barKeys={['revenue']}        // keys rendered as bars
+  lineKeys={['margin']}        // keys rendered as lines
+  areaKeys={[]}                // keys rendered as areas (used in "bar-area" and "multi-axis")
+  xAxisKey="name"
+  colors={[]}
+  height={300}
+  title=""
+  subtitle=""
+  showGrid={true}
+  showLegend={true}
+  showTooltip={true}
+  barRadius={4}
+  yAxisLabel=""                // left Y-axis label
+  yAxisRightLabel=""           // right Y-axis label (for dual-axis variants)
+/>
+```
+**Variant notes:**
+- `bar-line`: bars on left Y-axis, lines on right Y-axis (dual-axis)
+- `bar-area`: areas render behind bars on a single Y-axis
+- `multi-axis`: all three series types with independent left/right Y-axes
+
+#### RadialChart
+```jsx
+<RadialChart
+  variant="gauge"              // "gauge" | "progress" | "multi-ring" | "radar"
+  value={73}                   // current value for "gauge" and "progress"
+  maxValue={100}               // scale maximum
+  data={[]}                    // array of { name, value } for "multi-ring" and "radar"
+  dataKeys={[]}                // keys to plot for "radar" variant
+  colors={[]}
+  height={300}
+  title=""
+  subtitle=""
+  showLegend={false}
+  showTooltip={true}
+  label="Quota"                // center subtext for "gauge" and "progress"
+/>
+```
+**Variant notes:**
+- `gauge`: 240° arc with auto-coloring (green ≥70%, amber ≥40%, red <40%), displays `value` in center
+- `progress`: full 360° ring showing percentage complete, displays `percentage%` in center
+- `multi-ring`: concentric rings for multiple data items, each with its own color
+- `radar`: polygon radar/spider chart; `data` items need a `subject` key, `dataKeys` specify the series
+
+#### Chart Utilities
+```jsx
+import { SERIES_COLORS, CHART_COLORS } from '@/components/Charts/chartTheme';
+
+// SERIES_COLORS: ordered 10-color array for multi-series charts
+// CHART_COLORS: full palette object keyed by color family (blue, teal, purple, amber, red, green)
+//   each with shades: { 600, 500, 400, 300, 200, 100, 50 }
+```
+
+### List (multi-variant)
+
+`List` is a convenience wrapper that delegates to a specialized sub-component based on the `variant` prop. You can also import each sub-component directly. All list components use `forwardRef`.
+
+#### List (wrapper)
+```jsx
+<List
+  variant="activity-feed"      // "activity-feed" | "notification" | "ranked" | "with-avatar" | "with-table"
+  // ...variant-specific props
+/>
+```
+
+#### ActivityFeed
+```jsx
+<ActivityFeed
+  items={[
+    { id: '1', content: 'Deployed v2.1 to production', timestamp: '2 hours ago', color: '#3b82f6' },
+  ]}
+  maxHeight="400px"            // optional scroll container height
+/>
+```
+Each item: `{ id?, content, timestamp?, color? }`. Color sets the timeline dot; defaults to `--ds-text-brand`.
+
+#### NotificationList
+```jsx
+<NotificationList
+  items={[
+    {
+      id: '1',
+      title: 'Build failed',
+      description: 'CI pipeline error on main branch',
+      severity: 'error',       // "info" | "warning" | "error" | "success"
+      timestamp: '5 min ago',
+      unread: true,
+    },
+  ]}
+  maxHeight="400px"
+  onItemClick={(item, index) => {}}   // makes items clickable with hover state
+/>
+```
+Unread items show a bold title, selected background, and a blue dot indicator.
+
+#### RankedList
+```jsx
+<RankedList
+  items={[
+    { id: '1', label: 'Alice', sublabel: 'Engineering', value: '$142K' },
+  ]}
+/>
+```
+Each item: `{ id?, label, sublabel?, value? }`. Top 3 items get a highlighted rank badge.
+
+#### AvatarList
+```jsx
+<AvatarList
+  items={[
+    { id: '1', name: 'Alice Smith', avatar: '/avatars/alice.jpg', description: 'Engineering Lead', meta: 'Online' },
+  ]}
+  onItemClick={(item, index) => {}}   // makes items clickable with hover state
+/>
+```
+Each item: `{ id?, name, avatar?, description?, meta? }`. If no `avatar` URL, renders initials in a colored circle.
+
+#### TableList
+```jsx
+<TableList
+  columns={[
+    { key: 'name', header: 'Name', width: '200px', minWidth: '150px', icon: <Icon /> },
+    { key: 'status', header: 'Status', render: (val, row, index) => <Tag>{val}</Tag> },
+  ]}
+  data={[
+    { id: 1, name: 'Project Alpha', status: 'Active' },
+  ]}
+  sortable={false}                     // enable column sorting
+  defaultSortColumn="name"
+  defaultSortDirection="asc"           // "asc" | "desc"
+  actions={<Button size="sm">Filter</Button>}  // toolbar above the table
+/>
+```
+
+### KpiCard
+
+A metric card with multiple display variants. Uses `forwardRef`. Renders as a bordered card with hover shadow.
+
+```jsx
+<KpiCard
+  label="Monthly Revenue"       // uppercase label text
+  value="$48,200"               // primary metric display
+  variant="simple"              // "simple" | "with-trend" | "with-delta" | "with-progress" | "with-icon"
+/>
+```
+
+#### with-trend
+Displays a mini sparkline (SVG polyline) to the right of the value. Supports hover tooltip on data points.
+```jsx
+<KpiCard
+  variant="with-trend"
+  label="Active Users"
+  value="1,842"
+  trendData={[120, 135, 110, 158, 142, 170]}   // array of numbers
+  trendColor="var(--ds-text-brand)"             // sparkline stroke color
+/>
+```
+
+#### with-delta
+Shows a change indicator (trending up/down/neutral icon + formatted value) inline next to the metric.
+```jsx
+<KpiCard
+  variant="with-delta"
+  label="Conversion Rate"
+  value="3.2%"
+  delta={12}                    // positive = green + TrendingUp, negative = red + TrendingDown, 0 = neutral
+  deltaFormat="percentage"      // "percentage" (+12%) | "absolute" (+12)
+  deltaLabel="vs last month"   // optional context text below value
+/>
+```
+
+#### with-progress
+Displays a progress indicator — either a horizontal bar or a circular ring.
+```jsx
+<KpiCard
+  variant="with-progress"
+  label="Quota"
+  value="$34K"
+  progress={68}                 // 0-100
+  target="$50K"                 // shown as "{progress}% of {target}" below the bar
+  progressType="bar"            // "bar" (horizontal) | "ring" (circular, displayed on the right)
+  progressColor="var(--ds-text-brand)"
+/>
+```
+
+#### with-icon
+Shows a colored icon badge to the right of the metric.
+```jsx
+<KpiCard
+  variant="with-icon"
+  label="Open Tickets"
+  value="23"
+  icon={<TicketIcon size={20} />}
+  iconColor="#3b82f6"           // icon color + translucent background; defaults to brand
+/>
 ```
 
 ---
