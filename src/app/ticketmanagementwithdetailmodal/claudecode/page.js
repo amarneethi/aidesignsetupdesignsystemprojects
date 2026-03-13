@@ -8,7 +8,7 @@ import {
   Button,
   Search,
   Dropdown,
-} from '../components';
+} from '@/components';
 import {
   Ticket,
   Clock,
